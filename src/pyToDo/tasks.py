@@ -6,6 +6,8 @@ class NewTask(ctk.CTk):
     def __init__(self):
         super().__init__()
 
+        tasks = []
+
         self.geometry(f"{800}x{600}")
         self.title = "New Task"
         self.resizable(False, False)
@@ -22,9 +24,7 @@ class NewTask(ctk.CTk):
 
         self.task_description_label = ctk.CTkLabel(self, text="Task Description")
         self.task_description_label.grid(row=2, sticky="w", padx=10, pady=2)
-        self.task_description_entry = ctk.CTkTextbox(
-            self
-        )
+        self.task_description_entry = ctk.CTkTextbox(self)
         self.task_description_entry.grid(row=3, sticky="w", padx=10, pady=2)
 
         self.task_date_label = ctk.CTkLabel(self, text="Due date")
@@ -36,13 +36,12 @@ class NewTask(ctk.CTk):
         self.add_button.grid(row=6, sticky="se", padx=10, pady=2)
 
         # json
+
     def add_task(self):
 
         name = self.task_name_entry.get().strip()
         description = self.task_description_entry.get("0.0", "end").strip()
         due_date = self.task_date_entry.get().strip()
-
-        tasks = []
 
         new_task = {
             "name": name,
@@ -53,7 +52,7 @@ class NewTask(ctk.CTk):
         try:
             with open("tasks.json", "r", encoding="utf-8") as f:
                 tasks = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError):
+        except FileNotFoundError, json.JSONDecodeError:
             tasks = []
 
         tasks.append(new_task)

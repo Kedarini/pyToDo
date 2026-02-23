@@ -1,11 +1,12 @@
 import customtkinter as ctk
 from tasks import NewTask
+import json
 
 ctk.set_default_color_theme("../themes/pyToDo.json")
 ctk.set_appearance_mode("Dark")
 
 
-class App(ctk.CTk):
+class MainApp(ctk.CTk):
     def __init__(self):
         super().__init__()
 
@@ -85,3 +86,42 @@ class App(ctk.CTk):
             self.task_frame, text="Status", **HEADER_KWARGS
         )
         self.task_status_button.grid(column=6, row=0, padx=4, pady=4)
+
+        self.show_tasks()
+
+    def show_tasks(self):
+        try:
+            with open("tasks.json", "r", encoding="utf-8") as f:
+                tasks = json.load(f)
+        except FileNotFoundError, json.JSONDecodeError:
+            tasks = []
+
+        self.task_row = ctk.CTkScrollableFrame(self)
+
+        for i, task in enumerate(tasks, start=1):
+            name = task.get("name", "—")
+            desc = task.get("description", "").strip()[:80] + (
+                "..." if len(task.get("description", "")) > 80 else ""
+            )
+            due = task.get("due_date", "—")
+            status = task.get("status", "Pending")
+
+            ctk.CTkLabel(self.task_frame, text=name, anchor="center").grid(
+                row=i, column=0, sticky="ew", padx=8, pady=6
+            )
+
+            ctk.CTkLabel(
+                self.task_frame, text=desc, anchor="center", wraplength=400
+            ).grid(row=i, column=2, sticky="ew", padx=8, pady=6)
+
+            ctk.CTkLabel(self.task_frame, text=due, anchor="center").grid(
+                row=i, column=4, sticky="ew", padx=8, pady=6
+            )
+
+            status_label = ctk.CTkLabel(
+                self.task_frame,
+                text=status,
+                text_color="orange" if status == "Pending" else "green",
+                anchor="center",
+            )
+            status_label.grid(row=i, column=6, sticky="ew", padx=8, pady=6)

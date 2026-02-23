@@ -3,9 +3,7 @@ import tkinter.messagebox
 import customtkinter
 
 customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
-customtkinter.set_default_color_theme(
-    "../themes/pyToDo.json"
-)  # Themes: "blue" (standard), "green", "dark-blue"
+customtkinter.set_default_color_theme("../themes/pyToDo.json")
 
 
 class App(customtkinter.CTk):
