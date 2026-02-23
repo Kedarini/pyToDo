@@ -9,7 +9,7 @@ class App(ctk.CTk):
         self.resizable(False, False)
 
         ctk.set_appearance_mode("Dark")
-        ctk.set_default_color_theme("../themes/dark.json")
+        ctk.set_default_color_theme("../themes/pyToDo.json")
 
         self.grid_columnconfigure(0, weight=0)
         self.grid_columnconfigure(1, weight=1)
@@ -17,7 +17,7 @@ class App(ctk.CTk):
         self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=1)
 
-     #1st row
+        #1st row
 
         self.new_task_button = ctk.CTkButton(
             self, text="New Task"
@@ -40,7 +40,9 @@ class App(ctk.CTk):
             column=2, row=0, sticky="ne", padx=10, pady=10
         )
 
-        # 2nd row
+    # 2nd row
+
+        # Columns
 
         self.task_frame = ctk.CTkFrame(
             self
@@ -49,49 +51,56 @@ class App(ctk.CTk):
             columnspan=3, row=1, sticky="nsew", padx=10, pady=(0, 10)
         )
 
-        self.task_frame.grid_columnconfigure(0, weight=0)
-        self.task_frame.grid_columnconfigure(1, weight=0)
-        self.task_frame.grid_columnconfigure(2, weight=1)
-        self.task_frame.grid_columnconfigure(3, weight=0)
-        self.task_frame.grid_columnconfigure(4, weight=0)
-        self.task_frame.grid_columnconfigure(5, weight=0)
-        self.task_frame.grid_columnconfigure(6, weight=0)
+        SPACER = {
+            "text": "|",
+            "fg_color": "transparent",
+            "width": 10,
+            "cursor": "sb_h_double_arrow",
+            "hover": False
+        }
+
+        self.col_weights = [20, 0, 50, 0, 15, 0, 15]
+        for i, weight in enumerate(self.col_weights):
+            self.task_frame.grid_columnconfigure(i, weight=weight)
+
         self.task_frame.grid_rowconfigure(0, weight=0)
         self.task_frame.grid_rowconfigure(1, weight=0)
 
+        for col in [1,3,5]:
+            self.task_spacer = ctk.CTkButton(self.task_frame, **SPACER)
+            self.task_spacer.grid(row=0, column=col, sticky="ns", pady=1)
 
-        self.task_spacer1 = ctk.CTkButton(self.task_frame, text=" | ", fg_color="transparent", cursor="hand2", hover=False)
-        self.task_spacer2 = ctk.CTkButton(self.task_frame, text=" | ", fg_color="transparent", cursor="hand2", hover=False)
-        self.task_spacer3 = ctk.CTkButton(self.task_frame, text=" | ", fg_color="transparent", cursor="hand2", hover=False)
-
-        # place
-        self.task_spacer1.grid(row=0, column=1, sticky="ns", pady=1)
-        self.task_spacer2.grid(row=0, column=3, sticky="ns", pady=1)
-        self.task_spacer3.grid(row=0, column=5, sticky="ns", pady=1)
+        HEADER_KWARGS = {
+            "fg_color": "transparent",
+            "text_color": "#eceff4",
+            "anchor": "n",
+            "cursor": "hand2",
+            "hover": False
+        }
 
         self.task_name_button = ctk.CTkButton(
-            self.task_frame, text="Name", fg_color="transparent", height=15, cursor="hand2", hover=False
+            self.task_frame, text="Name ▾", **HEADER_KWARGS
         )
         self.task_name_button.grid(
             column=0, row=0, padx=4, pady=4
         )
 
         self.task_description_button = ctk.CTkButton(
-            self.task_frame, text="Description", fg_color="transparent", height=15, cursor="hand2", hover=False
+            self.task_frame, text="Description ▾", **HEADER_KWARGS
         )
         self.task_description_button.grid(
             column=2, row=0, pady=4
         )
 
         self.task_date_button = ctk.CTkButton(
-            self.task_frame, text="Date/Until", fg_color="transparent", height=15, cursor="hand2", hover=False
+            self.task_frame, text="Due date ▾", **HEADER_KWARGS
         )
         self.task_date_button.grid(
             column=4, row=0, pady=4
         )
 
         self.task_status_button = ctk.CTkButton(
-            self.task_frame, text="Status", fg_color="transparent", height=15, cursor="hand2", hover=False
+            self.task_frame, text="Status", **HEADER_KWARGS
         )
         self.task_status_button.grid(
             column=6, row=0,padx=4, pady=4
