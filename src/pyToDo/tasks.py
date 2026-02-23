@@ -6,11 +6,11 @@ class NewTask(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.geometry(f"{400}x{300}")
+        self.geometry(f"{800}x{600}")
         self.title = "New Task"
         self.resizable(False, False)
 
-        self.row_weights = [0, 0, 0, 0, 0, 0]
+        self.row_weights = [0, 0, 0, 0, 0, 0, 0]
         for i, weight in enumerate(self.row_weights):
             self.grid_rowconfigure(i, weight=weight)
 
@@ -22,8 +22,8 @@ class NewTask(ctk.CTk):
 
         self.task_description_label = ctk.CTkLabel(self, text="Task Description")
         self.task_description_label.grid(row=2, sticky="w", padx=10, pady=2)
-        self.task_description_entry = ctk.CTkEntry(
-            self, placeholder_text="Enter Task Description"
+        self.task_description_entry = ctk.CTkTextbox(
+            self
         )
         self.task_description_entry.grid(row=3, sticky="w", padx=10, pady=2)
 
@@ -32,8 +32,34 @@ class NewTask(ctk.CTk):
         self.task_date_entry = ctk.CTkEntry(self, placeholder_text="Enter Due Date")
         self.task_date_entry.grid(row=5, sticky="w", padx=10, pady=2)
 
+        self.add_button = ctk.CTkButton(self, text="Add", command=self.add_task)
+        self.add_button.grid(row=6, sticky="se", padx=10, pady=2)
 
-class Tasks:
-    def __init__(self):
+        # json
+    def add_task(self):
 
-        self.tasks = []
+        name = self.task_name_entry.get().strip()
+        description = self.task_description_entry.get("0.0", "end").strip()
+        due_date = self.task_date_entry.get().strip()
+
+        tasks = []
+
+        new_task = {
+            "name": name,
+            "description": description,
+            "due_date": due_date,
+        }
+
+        try:
+            with open("tasks.json", "r", encoding="utf-8") as f:
+                tasks = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            tasks = []
+
+        tasks.append(new_task)
+        print(new_task)
+
+        with open("tasks.json", "w", encoding="utf-8") as f:
+            json.dump(tasks, f, indent=2, ensure_ascii=False)
+
+        self.after(100, self.destroy)

@@ -255,4 +255,9 @@ cython_debug/
 .idea
 .idea/
 .idea/pyToDo.iml
+src/pyToDo/tasks.json
 
+!/src/pyToDo/tasks.json
+!/src/pyToDo/tasks.json
+!/src/pyToDo/tasks.json
+/src/pyToDo/tasks.json
