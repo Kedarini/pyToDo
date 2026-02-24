@@ -96,7 +96,8 @@ class MainApp(ctk.CTk):
         except FileNotFoundError, json.JSONDecodeError:
             tasks = []
 
-        self.task_row = ctk.CTkScrollableFrame(self)
+        self.task_row = ctk.CTkScrollableFrame(self.task_frame)
+        self.task_row.grid(columnspan=7, row=1, sticky="we")
 
         for i, task in enumerate(tasks, start=1):
             name = task.get("name", "—")
@@ -106,20 +107,20 @@ class MainApp(ctk.CTk):
             due = task.get("due_date", "—")
             status = task.get("status", "Pending")
 
-            ctk.CTkLabel(self.task_frame, text=name, anchor="center").grid(
+            ctk.CTkLabel(self.task_row, text=name, anchor="center").grid(
                 row=i, column=0, sticky="ew", padx=8, pady=6
             )
 
             ctk.CTkLabel(
-                self.task_frame, text=desc, anchor="center", wraplength=400
+                self.task_row, text=desc, anchor="center", wraplength=400
             ).grid(row=i, column=2, sticky="ew", padx=8, pady=6)
 
-            ctk.CTkLabel(self.task_frame, text=due, anchor="center").grid(
+            ctk.CTkLabel(self.task_row, text=due, anchor="center").grid(
                 row=i, column=4, sticky="ew", padx=8, pady=6
             )
 
             status_label = ctk.CTkLabel(
-                self.task_frame,
+                self.task_row,
                 text=status,
                 text_color="orange" if status == "Pending" else "green",
                 anchor="center",
