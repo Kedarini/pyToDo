@@ -30,17 +30,19 @@ class MainApp(ctk.CTk):
         self.search_entry = ctk.CTkEntry(self, placeholder_text="Search Task")
         self.search_entry.grid(column=1, row=0, sticky="nsew", padx=10, pady=10)
 
-        self.toggle_select_button = ctk.CTkButton(self, text="Select")
+        self.toggle_select_button = ctk.CTkButton(
+            self, text="Select", command=lambda: self.select_tasks()
+        )
         self.toggle_select_button.grid(column=2, row=0, sticky="ne", padx=10, pady=10)
 
         # 2nd row
 
         # Columns
 
-        self.task_frame = ctk.CTkFrame(self)
+        self.task_frame = ctk.CTkFrame(self, height=1000)
         self.task_frame.grid(columnspan=3, row=1, sticky="nsew", padx=10, pady=(0, 10))
 
-        SPACER = {
+        self.SPACER = {
             "text": "|",
             "fg_color": "transparent",
             "width": 10,
@@ -53,10 +55,10 @@ class MainApp(ctk.CTk):
             self.task_frame.grid_columnconfigure(i, weight=weight)
 
         self.task_frame.grid_rowconfigure(0, weight=0)
-        self.task_frame.grid_rowconfigure(1, weight=0)
+        self.task_frame.grid_rowconfigure(1, weight=1)
 
         for col in [1, 3, 5]:
-            self.task_spacer = ctk.CTkButton(self.task_frame, **SPACER)
+            self.task_spacer = ctk.CTkButton(self.task_frame, **self.SPACER)
             self.task_spacer.grid(row=0, column=col, sticky="ns", pady=1)
 
         HEADER_KWARGS = {
@@ -87,19 +89,22 @@ class MainApp(ctk.CTk):
         )
         self.task_status_button.grid(column=6, row=0, padx=4, pady=4)
 
+        try:
+            with open("tasks.json", "r", encoding="utf-8") as f:
+                self.tasks = json.load(f)
+        except FileNotFoundError, json.JSONDecodeError:
+            self.tasks = []
+
         self.show_tasks()
 
     def show_tasks(self):
-        try:
-            with open("tasks.json", "r", encoding="utf-8") as f:
-                tasks = json.load(f)
-        except FileNotFoundError, json.JSONDecodeError:
-            tasks = []
-
         self.task_row = ctk.CTkScrollableFrame(self.task_frame)
-        self.task_row.grid(columnspan=7, row=1, sticky="we")
+        self.task_row.grid(columnspan=7, row=1, sticky="nsew", padx=5, pady=(0, 5))
 
-        for i, task in enumerate(tasks, start=1):
+        for i, weight in enumerate(self.col_weights):
+            self.task_row.grid_columnconfigure(i, weight=weight)
+
+        for i, task in enumerate(self.tasks, start=1):
             name = task.get("name", "—")
             desc = task.get("description", "").strip()[:80] + (
                 "..." if len(task.get("description", "")) > 80 else ""
@@ -107,22 +112,50 @@ class MainApp(ctk.CTk):
             due = task.get("due_date", "—")
             status = task.get("status", "Pending")
 
-            ctk.CTkLabel(self.task_row, text=name, anchor="center").grid(
-                row=i, column=0, sticky="ew", padx=8, pady=6
+            ctk.CTkLabel(self.task_row, text=name, anchor="n").grid(
+                row=i, column=0, pady=4
             )
 
-            ctk.CTkLabel(
-                self.task_row, text=desc, anchor="center", wraplength=400
-            ).grid(row=i, column=2, sticky="ew", padx=8, pady=6)
+            ctk.CTkLabel(self.task_row, text=desc, anchor="n", wraplength=400).grid(
+                row=i, column=2, pady=4
+            )
 
-            ctk.CTkLabel(self.task_row, text=due, anchor="center").grid(
-                row=i, column=4, sticky="ew", padx=8, pady=6
+            ctk.CTkLabel(self.task_row, text=due, anchor="n").grid(
+                row=i, column=4, padx=8, pady=6
             )
 
             status_label = ctk.CTkLabel(
                 self.task_row,
                 text=status,
                 text_color="orange" if status == "Pending" else "green",
-                anchor="center",
+                anchor="n",
             )
-            status_label.grid(row=i, column=6, sticky="ew", padx=8, pady=6)
+            status_label.grid(row=i, column=6, padx=4, pady=4)
+
+            for col in [1, 3, 5]:
+                self.task_spacer = ctk.CTkButton(self.task_row, **self.SPACER)
+                self.task_spacer.grid(row=i, column=col, sticky="ns", pady=1)
+
+    def select_tasks(self):
+        if hasattr(self, "checkboxes") and self.checkboxes:
+            for cb in self.checkboxes:
+                cb.destroy()
+            self.checkboxes = []
+            self.selected_tasks = {}
+            self.toggle_select_button.configure(text="Select")
+            return
+
+        self.checkboxes = []
+        self.selected_tasks = {}
+
+        for idx, task in enumerate(self.tasks, start=1):
+            var = ctk.BooleanVar(value=False)
+            checkbox = ctk.CTkCheckBox(
+                self.task_row, text="", variable=var, width=20, height=20
+            )
+            checkbox.grid(row=idx, column=0, sticky="w", padx=(10, 4), pady=6)
+
+            self.checkboxes.append(checkbox)
+            self.selected_tasks[idx] = var
+
+        self.toggle_select_button.configure(text="Done")
