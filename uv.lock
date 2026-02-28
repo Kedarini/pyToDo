@@ -140,7 +140,7 @@ wheels = [
 
 [[package]]
 name = "pytodo"
-version = "23.2.2026.post2"
+version = "26.2.2026.post1"
 source = { virtual = "." }
 dependencies = [
     { name = "customtkinter" },

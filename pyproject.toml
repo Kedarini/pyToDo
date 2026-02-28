@@ -1,6 +1,6 @@
 [project]
 name = "pyToDo"
-version = "26.02.2026-1"
+version = "28.02.2026-1"
 description = "ToDo App Build on Python"
 requires-python = ">=3.14"
 license = {text = "MIT"}
