@@ -1,12 +1,12 @@
 [project]
 name = "pyToDo"
-version = "28.02.2026-1"
+version = "01.03.2026-1"
 description = "ToDo App Build on Python"
 requires-python = ">=3.14"
 license = {text = "MIT"}
 authors = [{name = "Radosław Damps", email = "kedardamps@gmail.com"}]
 dependencies = [
-    "customtkinter >=5.2.2"
+    "customtkinter >=5.2.2",
 ]
 [dependency-groups]
 dev = ["ruff", "pytest", "pytest-cov"]

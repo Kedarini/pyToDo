@@ -170,6 +170,7 @@ class MainApp(ctk.CTk):
             self.selected_tasks[idx] = var
 
         self.toggle_select_button.configure(text="Done")
+        self.show_tasks()
 
     def remove_tasks(self):
         if not self.checkboxes:
@@ -204,5 +205,4 @@ class MainApp(ctk.CTk):
         self.search_entry.grid()
         self.remove_selected_button.grid_remove()
 
-        # Refresh the list
         self.show_tasks()
